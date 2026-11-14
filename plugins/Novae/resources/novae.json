@@ -26,7 +26,7 @@
 			"minMagnitude": 16.5,
 			"peakJD": 2414360,
 			"RA": "19h01m50.6s",
-			"Dec": "13d09m42s"
+			"Dec": "-13d09m42s"
 		},
 		"V0606 Aql":
 		{
@@ -647,6 +647,156 @@
 			"peakJD": 2457962,
 			"RA": "18h31m45.86s",
 			"Dec": "-14d18m55.5s"
+		},
+		"PNV J13532700-6725110":
+		{
+			"name": "Nova Circinus 2018",
+			"type": "NA",
+			"maxMagnitude": 8.48,
+			"minMagnitude": 15.0,
+			"peakJD": 2458138,
+			"RA": "13h53m27.59s",
+			"Dec": "-67d25m00.9s"
+		},
+		"V659 Sct":
+		{
+			"name": "Nova Scuti 2019",
+			"type": "NA",
+			"maxMagnitude": 8.6,
+			"minMagnitude": 22.0,
+			"peakJD": 2458786.5, 
+			"RA": "18h39m59.71s",
+			"Dec": "-10d25m41.9s"
+		},
+		"V1112 Per":
+		{
+			"name": "Nova Persei 2020",
+			"type": "NA",
+			"maxMagnitude": 8.4,
+			"minMagnitude": 22.0,
+			"peakJD": 2459180.89, 
+			"RA": "04h29m18.85s",
+			"Dec": "43d54m23.0s"
+		},
+		"V1405 Cas":
+		{
+			"name": "Nova Cassiopeiae 2021",
+			"type": "NB",
+			"maxMagnitude": 5.1,
+			"minMagnitude": 15.6,
+			"peakJD": 2459345.25, 
+			"RA": "23h24m47.73s",
+			"Dec": "61d11m14.8s"
+		},
+		"V6595 Sgr":
+		{
+			"name": "Nova Sagittarii 2021 #2",
+			"type": "NA",
+			"maxMagnitude": 7.7,
+			"minMagnitude": 24.0,
+			"peakJD": 2459310.3125, 
+			"RA": "17h58m16.08s",
+			"Dec": "-29d14m56.6s"
+		},
+		"V1674 Her":
+		{
+			"name": "Nova Herculis 2021",
+			"type": "NA/DQ:",
+			"maxMagnitude": 6.0,
+			"minMagnitude": 20.5,
+			"peakJD": 2459378.35625, 
+			"RA": "18h57m30.98s",
+			"Dec": "16d53m39.6s"
+		},
+		"V1716 Sco":
+		{
+			"name": "Nova Scorpii 2023",
+			"type": "NA",
+			"maxMagnitude": 6.777,
+			"minMagnitude": 20.0,
+			"peakJD": 2460056.625, 
+			"RA": "17h22m45.05s",
+			"Dec": "-41d37m16.3s"
+		},
+		"V1723 Sco":
+		{
+			"name": "Nova Scorpii 2024",
+			"type": "NA",
+			"maxMagnitude": 6.773,
+			"minMagnitude": 20.6,
+			"peakJD": 2460351.29054, 
+			"RA": "17h26m18.13s",
+			"Dec": "-38d09m35.4s"
+		},
+		"V462 Lup":
+		{
+			"name": "Nova Lupi 2025",
+			"type": "NA",
+			"maxMagnitude": 4.741,
+			"minMagnitude": 18.5,
+			"peakJD": 2460847.248765, 
+			"RA": "15h08m03.27s",
+			"Dec": "-40d08m35.1s"
+		},
+		"V572 Vel":
+		{
+			"name": "Nova Velorum 2025",
+			"type": "NA+UGSU",
+			"maxMagnitude": 4.8,
+			"minMagnitude": 22.2,
+			"peakJD": 2460854.4,
+			"RA": "10h25m13.88s",
+			"Dec": "-53d31m19.2s"
+		},
+		"V7994 Sgr":
+		{
+			"name": "Nova Sagittarii 2025 #4",
+			"type": "NA",
+			"maxMagnitude": 6.9,
+			"minMagnitude": 22.99,
+			"peakJD": 2460943.0312, 
+			"RA": "18h03m52.76s",
+			"Dec": "-31d27m26.6s"
+		},
+		"V1935 Cen":
+		{
+			"name": "Nova Centauri 2025",
+			"type": "NA",
+			"maxMagnitude": 6.4,
+			"minMagnitude": 16.7,
+			"peakJD": 2460941.4125, 
+			"RA": "14h37m21.77s",
+			"Dec": "-58d47m40.0s"
+		},
+		"TCP J05210763+2338194":
+		{
+			"name": "Nova Tauri 2026",
+			"type": "NA",
+			"maxMagnitude": 8.784,
+			"minMagnitude": 23.4,
+			"peakJD": 2461264.654132, 
+			"RA": "05h21m07.63s",
+			"Dec": "+23d38m20.0s"
+		},
+		"V8055 Sgr":
+		{
+			"name": "Nova Sagittarii 2026 #3",
+			"type": "NA",
+			"maxMagnitude": 8.1,
+			"minMagnitude": 21.6,
+			"peakJD": 2461272.6415, 
+			"RA": "18h25m12.75s",
+			"Dec": "-22d25m29.5s"
+		},
+		"Gaia DR3 1824166210904571136":
+		{
+			"name": "Nova Sagitta 2026",
+			"type": "NA",
+			"maxMagnitude": 6.92,
+			"minMagnitude": 21.3,
+			"peakJD": 2461278.408738, 
+			"RA": "19h45m06.49s",
+			"Dec": "+18d22m42.2s"
 		}
 	}
 }

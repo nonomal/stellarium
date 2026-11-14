@@ -24,8 +24,9 @@
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneResizeEvent>
 #include <QSettings>
-#include <QWidget>
+#include <QDialog>
 #include "StelApp.hpp"
+#include "StelTranslator.hpp"
 
 class QAbstractButton;
 class QGroupBox;
@@ -39,27 +40,27 @@ class QToolButton;
 class AngleSpinBox;
 
 //! Base class for all the GUI windows in Stellarium.
-//! 
+//!
 //! Windows in Stellarium are actually basic QWidgets that have to be wrapped in
 //! a QGraphicsProxyWidget (CustomProxy) to be displayed by StelMainView
 //! (which is derived from QGraphicsView). See the %Qt documentation for details.
-//! 
+//!
 //! The base widget needs to be populated with controls in the implementation
 //! of the createDialogContent() function. This can be done either manually, or
 //! by using a .ui file. See the %Qt documentation on using %Qt Designer .ui files
 //! for details.
-//! 
+//!
 //! The createDialogContent() function itself is called automatically the first
 //! time setVisible() is called with "true".
-//! 
-//! Moving a window is done by dragging its title bar, defined in the BarFrame
-//! class. Every derived window class needs a BarFrame object - it
+//!
+//! Moving a window is done by dragging its title bar, defined in the TitleBar
+//! class. Every derived window class needs a TitleBar object - it
 //! has to be either included in a .ui file, or manually instantiated in
 //! createDialogContent().
 //!
 //! The screen location of the StelDialog can be stored in config.ini. This requires
 //! setting dialogName (must be a unique name, should be set in the constructor),
-//! and setting a connect() from the BarFrame's movedTo() signal to handleMovedTo()
+//! and setting a connect() from the TitleBar's movedTo() signal to handleMovedTo()
 //! in createDialogContent().
 //! If the dialog is called and the stored location is off-screen, the dialog is
 //! shifted to become visible.
@@ -78,16 +79,16 @@ class StelDialog : public QObject
 	Q_OBJECT
 	Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
 public:
-	StelDialog(QString dialogName="Default", QObject* parent=Q_NULLPTR);
-	virtual ~StelDialog() Q_DECL_OVERRIDE;
-
-	//! Notify that the application style changed
-	virtual void styleChanged();
+	StelDialog(const QString &dialogName=QString("Default"), QObject* parent=nullptr);
+	~StelDialog() override;
 
 	//! Returns true if the dialog contents have been constructed and are currently shown
 	bool visible() const;
+	QString getDialogName() const {return dialogName;}
 
 public slots:
+	//! Apply application style change
+	virtual void styleChanged(const QString &style);
 	//! Retranslate the content of the dialog.
 	//! Needs to be connected to StelApp::languageChanged().
 	//! At the very least, if the window is
@@ -95,7 +96,7 @@ public slots:
 	//! based on a Qt Designer file (.ui)</a>, the implementation needs to call
 	//! the generated class' retranslateUi() method, like this:
 	//! \code
-	//! if (dialog) 
+	//! if (dialog)
 	//! 	ui->retranslateUi(dialog);
 	//! \endcode
 	virtual void retranslate() = 0;
@@ -109,7 +110,6 @@ public slots:
 	//! When a subclass needs a size-dependent update, implement such update in the subclass version,
 	//! but call StelDialog::handleDialogSizeChanged() first.
 	virtual void handleDialogSizeChanged(QSizeF size);
-	QString getDialogName() const {return dialogName;}
 signals:
 	void visibleChanged(bool);
 
@@ -127,17 +127,20 @@ protected:
 	//! You should call something like setInputMask("009") for a 3-place numerical field.
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectIntProperty(QLineEdit* lineEdit, const QString& propName);
 	//! Helper function to connect a QSpinBox to an integer StelProperty.
 	//! @note This method also works with flag/enum types
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectIntProperty(QSpinBox* spinBox, const QString& propName);
 	//! Helper function to connect a QComboBox to an integer StelProperty.
 	//! The property is mapped to the selected index of the combobox.
 	//! @note This method also works with flag/enum types
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectIntProperty(QComboBox* comboBox, const QString& propName);
 	//! Helper function to connect a QSlider to an double or float StelProperty
 	//! @param slider The slider which should be connected
@@ -146,14 +149,17 @@ protected:
 	//! @param maxValue the int value associated with the maximal slider position
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectIntProperty(QSlider* slider, const QString& propName, int minValue, int maxValue);
 	//! Helper function to connect a QDoubleSpinBox to an double or float StelProperty
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectDoubleProperty(QDoubleSpinBox* spinBox, const QString& propName);
 	//! Helper function to connect an AngleSpinBox to a double or float StelProperty representing decimal degrees
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectDoubleProperty(AngleSpinBox* spinBox, const QString& propName);
 	//! Helper function to connect a QSlider to an double or float StelProperty
 	//! @param slider The slider which should be connected
@@ -162,6 +168,7 @@ protected:
 	//! @param maxValue the double value associated with the maximal slider position
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectDoubleProperty(QSlider* slider, const QString& propName, double minValue, double maxValue);
 
 	//! Helper function to connect a QComboBox to a QString StelProperty.
@@ -169,32 +176,27 @@ protected:
 	//! Make sure the string is available in the Combobox, else the first element may be chosen.
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectStringProperty(QComboBox *comboBox, const QString &propName);
 	//! Helper function to connect a QLineEdit to a QString StelProperty.
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectStringProperty(QLineEdit *lineEdit, const QString &propName);
 
 	//! Helper function to connect a checkbox to a bool StelProperty
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectBoolProperty(QAbstractButton* checkBox, const QString& propName);
 	//! Helper function to connect a groupbox to a bool StelProperty
 	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
 	//! to the required datatype, the application will crash
+	//Q_DECL_DEPRECATED_X("Use functor-based connections. https://doc.qt.io/qt-5/signalsandslots-syntaxes.html")
 	static void connectBoolProperty(QGroupBox *checkBox, const QString &propName);
 
-	//! Prepare a QToolButton so that it can receive and handle askColor() connections properly.
-	//! @param toolButton the QToolButton which shows the color
-	//! @param propertyName a StelProperty name which must represent a color (coded as Vec3f)
-	//! @param iniName the associated entry for config.ini, in the form group/name. Usually "color/some_feature_name_color".
-	//! @param moduleName if the iniName is for a module (plugin)-specific ini file, add the module name here. The module needs an implementation of getSettings()
-	//! @warning If the action with \c propName is invalid/unregistered, or cannot be converted
-	//! to the required datatype, the application will crash
-	void connectColorButton(QToolButton* button, QString propertyName, QString iniName, QString moduleName="");
-
 	//! The main dialog
-	QWidget* dialog;
+	QDialog* dialog;
 	class CustomProxy* proxy;
 	//! The name should be set in derived classes' constructors and can be used to store and retrieve the panel locations.
 	QString dialogName;
@@ -204,29 +206,29 @@ protected:
 	QList<QWidget *> kineticScrollingList;
 
 protected slots:
-	bool askConfirmation();
-	//! To be called by a connected QToolButton with a color background.
-	//! This QToolButton needs properties "propName" and "iniName" which should be prepared using connectColorButton().
-	void askColor();
+	bool askConfirmation(const QString &message = q_("Are you sure? This will delete your customized data."));
+	void messageBox(const QString &title, const QString &message);
+
 	//! enable kinetic scrolling. This should be connected to StelApp's StelGui signal flagUseKineticScrollingChanged.
 	void enableKineticScrolling(bool b);
 	//! connect from StelApp to handle font and font size changes.
 	void handleFontChanged();
+	//! connect from StelApp to handle CSS style changes
+	void handleColorSchemeChanged();
 
-private slots:
-	void updateNightModeProperty();
+	virtual void updateNightModeProperty(bool n);
 };
 
 class CustomProxy : public QGraphicsProxyWidget
 {	private:
 	Q_OBJECT
 	public:
-		CustomProxy(QGraphicsItem *parent = Q_NULLPTR, Qt::WindowFlags wFlags = Qt::Widget) : QGraphicsProxyWidget(parent, wFlags)
+		CustomProxy(QGraphicsItem *parent = nullptr, Qt::WindowFlags wFlags = Qt::Widget) : QGraphicsProxyWidget(parent, wFlags)
 		{
 			setFocusPolicy(Qt::StrongFocus);
 		}
 		//! Reimplement this method to add windows decorations. Currently there are invisible 2 px decorations
-		void paintWindowFrame(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
+		void paintWindowFrame(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) override
 		{
 /*			QStyleOptionTitleBar bar;
 			initStyleOption(&bar);
@@ -236,7 +238,7 @@ class CustomProxy : public QGraphicsProxyWidget
 		}
 	signals: void sizeChanged(QSizeF);
 	protected:
-		virtual bool event(QEvent* event)
+		bool event(QEvent* event) override
 		{
 			if (StelApp::getInstance().getSettings()->value("gui/flag_use_window_transparency", true).toBool())
 			{
@@ -246,21 +248,17 @@ class CustomProxy : public QGraphicsProxyWidget
 						widget()->setWindowOpacity(0.4);
 						break;
 					case QEvent::WindowActivate:
-					case QEvent::GrabMouse:
 						widget()->setWindowOpacity(0.9);
-						break;
 					default:
 						break;
 				}
 			}
 			return QGraphicsProxyWidget::event(event);
 		}
-		virtual void resizeEvent(QGraphicsSceneResizeEvent *event)
+		void resizeEvent(QGraphicsSceneResizeEvent *event) override
 		{
 			if (event->newSize() != event->oldSize())
-			{
 				emit sizeChanged(event->newSize());
-			}
 			QGraphicsProxyWidget::resizeEvent(event);
 		}
 };

@@ -22,16 +22,15 @@
 
 #include "StelObjectType.hpp"
 #include "StelObjectModule.hpp"
-#include "StelProjectorType.hpp"
 
 #include <vector>
 #include <QString>
 #include <QStringList>
-#include <QFont>
 
 class StelToneReproducer;
 class StarMgr;
 class Asterism;
+class StelSkyCulture;
 class StelProjector;
 class StelPainter;
 
@@ -42,84 +41,61 @@ class StelPainter;
 class AsterismMgr : public StelObjectModule
 {
 	Q_OBJECT
-	Q_PROPERTY(float fontSize
-		   READ getFontSize
-		   WRITE setFontSize
-		   NOTIFY fontSizeChanged)
-	Q_PROPERTY(Vec3f linesColor
-		   READ getLinesColor
-		   WRITE setLinesColor
-		   NOTIFY linesColorChanged)
-	Q_PROPERTY(bool linesDisplayed
-		   READ getFlagLines
-		   WRITE setFlagLines
-		   NOTIFY linesDisplayedChanged)
-	Q_PROPERTY(Vec3f rayHelpersColor
-		   READ getRayHelpersColor
-		   WRITE setRayHelpersColor
-		   NOTIFY rayHelpersColorChanged)
-	Q_PROPERTY(bool rayHelpersDisplayed
-		   READ getFlagRayHelpers
-		   WRITE setFlagRayHelpers
-		   NOTIFY rayHelpersDisplayedChanged)
-	Q_PROPERTY(Vec3f namesColor
-		   READ getLabelsColor
-		   WRITE setLabelsColor
-		   NOTIFY namesColorChanged)
-	Q_PROPERTY(bool namesDisplayed
-		   READ getFlagLabels
-		   WRITE setFlagLabels
-		   NOTIFY namesDisplayedChanged)
-	Q_PROPERTY(int asterismLineThickness
-		   READ getAsterismLineThickness
-		   WRITE setAsterismLineThickness
-		   NOTIFY asterismLineThicknessChanged)
-	Q_PROPERTY(int rayHelperThickness
-		   READ getRayHelperThickness
-		   WRITE setRayHelperThickness
-		   NOTIFY rayHelperThicknessChanged)
+	Q_PROPERTY(int fontSize					READ getFontSize						WRITE setFontSize						NOTIFY fontSizeChanged)
+	Q_PROPERTY(Vec3f linesColor				READ getLinesColor					WRITE setLinesColor					NOTIFY linesColorChanged)
+	Q_PROPERTY(bool linesDisplayed			READ getFlagLines					WRITE setFlagLines					NOTIFY linesDisplayedChanged)
+	Q_PROPERTY(Vec3f rayHelpersColor			READ getRayHelpersColor				WRITE setRayHelpersColor				NOTIFY rayHelpersColorChanged)
+	Q_PROPERTY(bool rayHelpersDisplayed		READ getFlagRayHelpers				WRITE setFlagRayHelpers				NOTIFY rayHelpersDisplayedChanged)
+	Q_PROPERTY(Vec3f namesColor				READ getLabelsColor					WRITE setLabelsColor					NOTIFY namesColorChanged)
+	Q_PROPERTY(bool namesDisplayed			READ getFlagLabels					WRITE setFlagLabels					NOTIFY namesDisplayedChanged)
+	Q_PROPERTY(int asterismLineThickness		READ getAsterismLineThickness			WRITE setAsterismLineThickness			NOTIFY asterismLineThicknessChanged)
+	Q_PROPERTY(int rayHelperThickness			READ getRayHelperThickness			WRITE setRayHelperThickness			NOTIFY rayHelperThicknessChanged)
+	Q_PROPERTY(bool isolateAsterismSelected		READ getFlagIsolateAsterismSelected		WRITE setFlagIsolateAsterismSelected	NOTIFY isolateAsterismSelectedChanged)
+	Q_PROPERTY(float namesFadeDuration		READ getLabelsFadeDuration			WRITE setLabelsFadeDuration			NOTIFY namesFadeDurationChanged)
+	Q_PROPERTY(float linesFadeDuration			READ getLinesFadeDuration				WRITE setLinesFadeDuration			NOTIFY linesFadeDurationChanged)
+	Q_PROPERTY(float rayHelpersFadeDuration	READ getRayHelpersFadeDuration		WRITE setRayHelpersFadeDuration		NOTIFY rayHelpersFadeDurationChanged)
 
 public:
 	//! Constructor
 	AsterismMgr(StarMgr *stars);
 	//! Destructor
-	virtual ~AsterismMgr();
+	~AsterismMgr() override;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Methods defined in the StelModule class
 	//! Initialize the AsterismMgr.
 	//! Reads from the asterism parser object and updates the loading bar
 	//! as asterism objects are loaded for the required sky culture.
-	virtual void init();
+	void init() override;
 
 	//! Draw asterism lines, art, names and boundaries.
-	virtual void draw(StelCore* core);
+	void draw(StelCore* core) override;
 
 	//! Updates time-varying state for each asterism.
-	virtual void update(double deltaTime);
+	void update(double deltaTime) override;
 
 	//! Return the value defining the order of call for the given action
 	//! @param actionName the name of the action for which we want the call order
 	//! @return the value defining the order. The closer to 0 the earlier the module's action will be called
-	virtual double getCallOrder(StelModuleActionName actionName) const;
+	double getCallOrder(StelModuleActionName actionName) const override;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Methods defined in StelObjectModule class
-	virtual QList<StelObjectP> searchAround(const Vec3d& v, double limitFov, const StelCore* core) const;
+	//QList<StelObjectP> searchAround(const Vec3d& v, double limitFov, const StelCore* core) const override;
 
 	//! Return the matching asterism object's pointer if exists or Q_NULLPTR
 	//! @param nameI18n The case in-sensitive asterism name
-	virtual StelObjectP searchByNameI18n(const QString& nameI18n) const;
+	StelObjectP searchByNameI18n(const QString& nameI18n) const override;
 
 	//! Return the matching asterism if exists or Q_NULLPTR
 	//! @param name The case in-sensitive standard program name (three letter abbreviation)
-	virtual StelObjectP searchByName(const QString& name) const;
+	StelObjectP searchByName(const QString& name) const override;
 
-	virtual StelObjectP searchByID(const QString &id) const;
+	StelObjectP searchByID(const QString &id) const override;
 
-	virtual QStringList listAllObjects(bool inEnglish) const;
-	virtual QString getName() const { return "Asterisms"; }
-	virtual QString getStelObjectType() const;
+	QVector<QPair<QString,StelObjectP>> listAllObjects(bool inEnglish) const override;
+	QString getName() const override { return "Asterisms"; }
+	QString getStelObjectType() const override;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Properties setters and getters
@@ -127,8 +103,9 @@ public slots:
 	//! Define line color
 	//! @param color The color of lines
 	//! @code
-	//! // example of usage in scripts
-	//! AsterismMgr.setLinesColor(Vec3f(1.0,0.0,0.0));
+	//! // example of usage in scripts (Qt6-based Stellarium)
+	//! var c = new Color(1.0, 0.0, 0.0);
+	//! AsterismMgr.setLinesColor(c.toVec3f());
 	//! @endcode
 	void setLinesColor(const Vec3f& color);
 	//! Get line color
@@ -142,8 +119,9 @@ public slots:
 	//! Define ray helper color
 	//! @param color The color of ray helpers
 	//! @code
-	//! // example of usage in scripts
-	//! AsterismMgr.setRayHelpersColor(Vec3f(1.0,0.0,0.0));
+	//! // example of usage in scripts (Qt6-based Stellarium)
+	//! var c = new Color(1.0, 0.0, 0.0);
+	//! AsterismMgr.setRayHelpersColor(c.toVec3f());
 	//! @endcode
 	void setRayHelpersColor(const Vec3f& color);
 	//! Get ray helper color
@@ -157,8 +135,9 @@ public slots:
 	//! Set label color for names
 	//! @param color The color of labels
 	//! @code
-	//! // example of usage in scripts
-	//! AsterismMgr.setLabelsColor(Vec3f(1.0,0.0,0.0));
+	//! // example of usage in scripts (Qt6-based Stellarium)
+	//! var c = new Color(1.0, 0.0, 0.0);
+	//! AsterismMgr.setLabelsColor(c.toVec3f());
 	//! @endcode
 	void setLabelsColor(const Vec3f& color);
 	//! Get label color for names
@@ -170,9 +149,9 @@ public slots:
 	bool getFlagLabels(void) const;
 
 	//! Set the font size used for asterism names display
-	void setFontSize(const float newFontSize);
+	void setFontSize(const int newFontSize);
 	//! Get the font size used for asterism names display
-	float getFontSize() const;
+	int getFontSize() const;
 
 	//! Set the thickness of lines of the asterisms
 	//! @param thickness of line in pixels
@@ -189,21 +168,70 @@ public slots:
 	//! @return true if asterism lines is defined
 	bool isLinesDefined() { return hasAsterism; }
 
+	//! Set whether selected asterism must be displayed alone
+	void setFlagIsolateAsterismSelected(const bool isolate);
+	//! Get whether selected asterism is displayed alone
+	bool getFlagIsolateAsterismSelected(void) const;
+
+	//! Select the asterism by his English name. Calling this method will enable
+	//! isolated selection for the asterisms if it is not enabled yet.
+	//! @param englishName the English name of the asterism
+	//! @code
+	//! // example of usage in scripts: select the "Summer Triangle" asterism
+	//! AsterismMgr.selectAsterism("Summer Triangle");
+	//! @endcode
+	void selectAsterism(const QString& englishName);
+
+	//! Remove the asterism from list of selected asterisms by his English
+	//! name. Calling this method will enable isolated selection for the asterisms
+	//! if it is not enabled yet.
+	//! @param englishName the English name of the asterism
+	//! @code
+	//! // example of usage in scripts: remove selection from the "Summer Triangle" asterism
+	//! AsterismMgr.deselectAsterism("Summer Triangle");
+	//! @endcode
+	//! @note all asterisms will be hidden when list of selected asterisms will be empty
+	void deselectAsterism(const QString& englishName);
+
+	//! Remove asterisms from selected objects
+	void deselectAsterisms(void);
+
+	//! Select all asterisms
+	void selectAllAsterisms(void);
+
+	//! Set asterism lines fade duration in second
+	void setLinesFadeDuration(const float duration);
+	//! Get asterism lines fade duration in second
+	float getLinesFadeDuration() const;
+
+	//! Set asterism screen labels fade duration in second
+	void setLabelsFadeDuration(const float duration);
+	//! Get asterism screen labels fade duration in second
+	float getLabelsFadeDuration() const;
+
+	//! Set ray helpers fade duration in second
+	void setRayHelpersFadeDuration(const float duration);
+	//! Get ray helpers fade duration in second
+	float getRayHelpersFadeDuration() const;
+
 signals:
-	void fontSizeChanged(const float newSize) const;
-	void linesColorChanged(const Vec3f & color) const;
-	void linesDisplayedChanged(const bool displayed) const;
-	void namesColorChanged(const Vec3f & color) const;
-	void namesDisplayedChanged(const bool displayed) const;
-	void asterismLineThicknessChanged(int thickness) const;
-	void rayHelpersColorChanged(const Vec3f & color) const;
-	void rayHelpersDisplayedChanged(const bool displayed) const;
-	void rayHelperThicknessChanged(int thickness) const;
+	void fontSizeChanged(const int newSize);
+	void linesColorChanged(const Vec3f & color);
+	void linesDisplayedChanged(const bool displayed);
+	void namesColorChanged(const Vec3f & color);
+	void namesDisplayedChanged(const bool displayed);
+	void asterismLineThicknessChanged(int thickness);
+	void rayHelpersColorChanged(const Vec3f & color);
+	void rayHelpersDisplayedChanged(const bool displayed);
+	void rayHelperThicknessChanged(int thickness);
+	void isolateAsterismSelectedChanged(const bool isolate);
+	void namesFadeDurationChanged(const float duration);
+	void linesFadeDurationChanged(const float duration);
+	void rayHelpersFadeDurationChanged(const float duration);
 
 private slots:
 	//! Loads new asterism data and art if the SkyCulture has changed.
-	//! @param skyCultureDir the name of the directory containing the sky culture to use.
-	void updateSkyCulture(const QString& skyCultureDir);
+	void updateSkyCulture(const StelSkyCulture& skyCulture);
 
 	//! Update i18n names from English names according to current
 	//! locale, and update font for locale.
@@ -211,42 +239,46 @@ private slots:
 	//! in translations.h
 	void updateI18n();
 
+	//! Limit the number of asterisms to draw based on selected asterisms.
+	//! The selected objects changed, check if some asterism are selected and display the
+	//! matching asterisms if isolateAsterismSelected mode is activated.
+	//! @param action define whether to add to, replace, or remove from the existing selection
+	void selectedObjectChange(StelModule::StelModuleSelectAction action);
+
+	//! Toggle single asterism selection mode
+	void switchSelectionMode();
+
 private:
-	//! Read asterism names from the given file.
-	//! @param namesFile Name of the file containing the asterism names
-	//!        in a format consisting of abbreviation and translatable english name.
-	//! @note The abbreviation must occur in the lines file loaded first in @name loadLines()!
-	void loadNames(const QString& namesFile);
-
-	//! Load asterism line shapes from data files.
-	//! @param fileName The name of the asterism data file
-	//! @note The abbreviation used in @param filename is required for cross-identifying translatable names in @name loadNames():
-	void loadLines(const QString& fileName);
-
 	//! Draw the asterism lines at the epoch given by the StelCore.
 	void drawLines(StelPainter& sPainter, const StelCore* core) const;
 	//! Draw the ray helpers at the epoch given by the StelCore.
 	void drawRayHelpers(StelPainter& sPainter, const StelCore* core) const;
 	//! Draw the asterism name labels.
-	void drawNames(StelPainter& sPainter) const;
+	void drawNames(StelPainter& sPainter, const Vec3d &obsVelocity) const;
+	//! Handle single and multi-asterism selections.
+	void setSelectedAsterism(Asterism* a);
+	//! Handle unselecting a single asterism.
+	void unsetSelectedAsterism(Asterism* a);
 
-	Asterism* isStarIn(const StelObject *s) const;
 	Asterism* findFromAbbreviation(const QString& abbreviation) const;
 
-	//Constellation* isStarIn(const StelObject *s) const;
-	//Constellation* findFromAbbreviation(const QString& abbreviation) const;
 	std::vector<Asterism*> asterisms;
-	QFont asterFont;
+	std::vector<Asterism*> selected; // More than one can be selected at a time
 	StarMgr* hipStarMgr;
 
-	QString lastLoadedSkyCulture;	// Store the last loaded sky culture directory name
 	QString currentSkyCultureID;
 
 	bool linesDisplayed;
 	bool rayHelpersDisplayed;
 	bool namesDisplayed;
 	bool hasAsterism;
+	bool isolateAsterismSelected; // true to pick individual asterisms.
 
+	float linesFadeDuration;
+	float namesFadeDuration;
+	float rayHelpersFadeDuration;
+
+	int fontSize;
 	// Store the thickness of lines of the asterisms
 	int asterismLineThickness;
 	int rayHelperThickness;

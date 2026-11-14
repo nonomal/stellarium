@@ -404,7 +404,7 @@ void HttpRequest::parseMultiPartFile()
 	while (!tempFile.atEnd() && !finished && !tempFile.error())
 	{
 #ifdef SUPERVERBOSE
-		qDebug("HttpRequest: reading multpart headers");
+		qDebug("HttpRequest: reading multipart headers");
 #endif
 		QByteArray fieldName;
 		QByteArray fileName;
@@ -443,7 +443,7 @@ void HttpRequest::parseMultiPartFile()
 		}
 
 #ifdef SUPERVERBOSE
-		qDebug("HttpRequest: reading multpart data");
+		qDebug("HttpRequest: reading multipart data");
 #endif
 		QTemporaryFile* uploadedFile=Q_NULLPTR;
 		QByteArray fieldValue;
@@ -467,8 +467,16 @@ void HttpRequest::parseMultiPartFile()
 #ifdef SUPERVERBOSE
 					qDebug("HttpRequest: finishing writing to uploaded file");
 #endif
-					Q_ASSERT(uploadedFile);
-					uploadedFile->resize(uploadedFile->size()-2);
+					if (uploadedFile)
+					{
+						uploadedFile->resize(uploadedFile->size()-2);
+					}
+					else
+					{
+						// An empty file part has no data line and no temp file yet.
+						uploadedFile=new QTemporaryFile();
+						uploadedFile->open();
+					}
 					uploadedFile->flush();
 					uploadedFile->seek(0);
 					parameters.insert(fieldName,fileName);
